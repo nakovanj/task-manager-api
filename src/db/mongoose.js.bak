@@ -1,0 +1,89 @@
+const mongoose = require('mongoose')
+const validator = require('validator')
+
+mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
+    useNewUrlParser: true,
+    useCreateIndex: true
+})
+
+const User = mongoose.model('User', {
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        minLength: 1
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+        validate(value) {
+            if (!validator.isEmail(value)) {
+                throw new Error('Email is invalid!')
+            }
+        }
+    },
+    age: {
+        type: Number,
+        default: 0,
+        validate(value) {
+            if (value < 0) {
+                throw new Error('Age must be positive number')
+            }
+        }
+
+    },
+    password: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 7,
+        validate(value) {
+            if (!(value.toLowerCase().search('password') === -1)) {
+                throw Error('Do not use password as a pass word!')
+            }
+        }
+    }
+}
+)
+
+const me = new User({
+    name: '     Andrew O   ',
+    email: 'Andrew@brb.io     ',
+    password: 'pč       '
+
+})
+
+me.save().then(() => {
+    console.log(me)
+}).catch((error) => {
+    console.log('Save error', error)
+})
+
+const Task = mongoose.model('Task', {
+    description: {
+        type: String,
+        trim: true,
+        minlength: 2,
+        required: true
+
+    },
+    completed: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
+}
+)
+
+const task1 = new Task({
+    description: 'Ohladi pivo       '
+})
+
+task1.save().then((Res) => {
+    console.log('Res: ', Res)
+}).catch((error) => {
+    console.log('Save error: ', error)
+})
+

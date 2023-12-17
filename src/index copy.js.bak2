@@ -1,0 +1,44 @@
+const express = require('express')
+require('./db/mongoose')
+const jwt = require('jsonwebtoken')
+
+const taskRouter = require('./routers/task')
+const userRouter = require('./routers/user')
+
+
+const app = express()
+const port = process.env.PORT || 3000
+// express middlware - if armed, triggered BEFORE router!
+//  can process req
+// must be before other app.use
+
+
+
+
+app.use(express.json()) //automatically parse json to object
+app.use(userRouter)
+app.use(taskRouter)
+
+
+
+
+
+app.listen(port, () => {
+    console.log('Server is running on port: ', port)
+})
+
+
+const Task = require('./models/task')
+const User = require('./models/user')
+const main = async () => {
+    // const task = await Task.findById('65722cd653ac2b1d94e53b9f')
+    // await task.populate('owner').execPopulate() // use ref to fetch user
+    // console.log(task.owner)
+    const user = await User.findById('65722c0700ea2157ec942636')
+    await user.populate('tasks').execPopulate() //use virtual property
+    console.log('User: ', user.tasks)
+
+}
+
+main()
+
