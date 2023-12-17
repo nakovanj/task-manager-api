@@ -82,7 +82,7 @@ userSchema.virtual('tasks', {
 
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email: email })
-    console.log('findByCredentials', email, password)
+   // console.log('findByCredentials', email, password)
     if (!user) {
         throw new Error('Unable to login - email')
     }
