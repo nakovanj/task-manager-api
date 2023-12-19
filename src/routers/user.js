@@ -60,8 +60,16 @@ router.post('/users', async (req, res) => {
     // })
 })
 
-router.get('/users/:id', async (req, res) => {
+// auth mw is in the middle 
+//router.get('/users', auth, async (req, res) => {
+//user is authenticated, but shall not see other user's data
+//so route is changed from /users -> /users/me
+router.get('/user/me', auth, async (req, res) => {
+    res.send(req.user)
 
+})
+
+router.get('/users/:id', async (req, res) => {
     try {
         const _id = req.params.id
 
@@ -73,39 +81,9 @@ router.get('/users/:id', async (req, res) => {
     } catch (e) {
         res.status(500).send(e)
     }
-    // User.findById(_id).then((user) => {
-    //     if (!user) {
-    //         return res.status(404).send()
-    //     }
-    //     res.send(user)
-    // }).catch((error) => {
-    //     res.status(500).send()
-    // })
 })
 
-// auth mw is in the middle 
-//router.get('/users', auth, async (req, res) => {
 
-//user is authenticated, but shall not see other user's data
-//so route is changed from /users -> /users/me
-router.get('/user/me', auth, async (req, res) => {
-
-    res.send(req.user)
-
-    // User.find({}).then( (users) => {
-    //     res.send(users)
-    // }).catch((error) => {
-    //    res.status(500).send()
-    // })
-
-    // get all users data
-    // try {
-    //     const users = await User.find({})
-    //     res.send(users)
-    // } catch (e) {
-    //     res.status(500).send(e)
-    // }
-})
 
 // router.patch('/users/:id', async (req, res) => {
 //     const updates = Object.keys(req.body)
@@ -193,13 +171,12 @@ router.post('/users/login', async (req, res) => {
     try {
         // not mongoose's function - possible to create
         // own functions only of schema is explicit
-
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
 //        const retUs = user.getPublicProfile()
         res.send({ user, token }) 
     } catch (e) {
-        console.log("error:::: ")
+       // console.log("users login error:::: ")
         res.status(400).send({ error: e.toString() })
     }
 })
@@ -260,7 +237,7 @@ router.get('/users/:id/avatar', async (req, res) => {
         res.set('Content-Type', 'image/png')
         res.send(user.avatar)
     } catch(e) {
-        res.status(404).send({ error: e.toString() })
+        res.status(406).send({ error: e.toString() })
     }
 } )
 

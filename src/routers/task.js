@@ -37,6 +37,7 @@ router.get('/tasks/:id', auth, async (req, res) => {
         //    const task = await Task.findById(_id)
         const task = await Task.findOne({ _id: _id, owner: req.user.id })
         if (!task) {
+            console.info('#1')
             return res.status(404).send()
         }
         res.send(task)
@@ -109,6 +110,8 @@ router.patch('/tasks/:id', auth, async (req, res) => {
         const task = await Task.findOne({ _id: req.params.id, owner: req.user._id })
         // const task = await Task.findById(req.params.id)
         if (!task) {
+            console.info('#2')
+
             return res.status(404).send()
         }
 
@@ -134,6 +137,8 @@ router.delete('/tasks/:id', auth, async (req, res) => {
         const task = await Task.findOne({ _id: req.params.id, owner: req.user._id })
 
         if (!task) {
+            console.info('#3')
+
             return res.status(404).send()
         }
         await task.remove()
